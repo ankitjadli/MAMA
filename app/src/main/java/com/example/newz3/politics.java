@@ -1,5 +1,4 @@
 package com.example.newz3;
-
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -19,61 +18,62 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
-public class politics extends AppCompatActivity{
+public class politics extends AppCompatActivity {
 
-        private RecyclerView mPeopleRV;
-        private DatabaseReference mDatabase;
-        private FirebaseRecyclerAdapter<News, politics.NewsViewHolder> mPeopleRVAdapter;
+    private RecyclerView mPeopleRV;
+    private DatabaseReference mDatabase;
+    private FirebaseRecyclerAdapter<News, politics.NewsViewHolder> mPeopleRVAdapter;
 
-
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            setTitle("News");
-            //"News" here will reflect what you have called your database in Firebase.
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("News");
-            mDatabase.keepSynced(true);
+        setContentView(R.layout.activity_politics);
 
-            mPeopleRV = (RecyclerView) findViewById(R.id.swipeuprecycler);
+        setTitle("News");
+        //"News" here will reflect what you have called your database in Firebase.
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("News");
+        mDatabase.keepSynced(true);
 
-            DatabaseReference personsRef = FirebaseDatabase.getInstance().getReference().child("News");
-            Query personsQuery = personsRef.orderByKey();
+        mPeopleRV = (RecyclerView) findViewById(R.id.swipeuprecycler);
 
-            mPeopleRV.hasFixedSize();
-            mPeopleRV.setLayoutManager(new LinearLayoutManager(this));
+        DatabaseReference personsRef = FirebaseDatabase.getInstance().getReference().child("News");
+        Query personsQuery = personsRef.orderByKey();
 
-            FirebaseRecyclerOptions personsOptions = new FirebaseRecyclerOptions.Builder<News>().setQuery(personsQuery, News.class).build();
+        mPeopleRV.hasFixedSize();
+        mPeopleRV.setLayoutManager(new LinearLayoutManager(this));
 
-            mPeopleRVAdapter = new FirebaseRecyclerAdapter<News, politics.NewsViewHolder>(personsOptions) {
-                @Override
-                protected void onBindViewHolder(politics.NewsViewHolder holder, final int position, final News model) {
-                    holder.setTitle(model.getTitle());
-                    holder.setDesc(model.getDesc());
-                    holder.setImage(getBaseContext(), model.getImage());
+        FirebaseRecyclerOptions personsOptions = new FirebaseRecyclerOptions.Builder<News>().setQuery(personsQuery, News.class).build();
 
-                    holder.mView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final String url = model.getUrl();
-                            Intent intent = new Intent(getApplicationContext(), onclick.class);
-                            intent.putExtra("id", url);
-                            startActivity(intent);
-                        }
-                    });
-                }
+        mPeopleRVAdapter = new FirebaseRecyclerAdapter<News, politics.NewsViewHolder>(personsOptions) {
+            @Override
+            protected void onBindViewHolder(politics.NewsViewHolder holder, final int position, final News model) {
+                holder.setTitle(model.getTitle());
+                holder.setDesc(model.getDesc());
+                holder.setImage(getBaseContext(), model.getImage());
 
-                @Override
-                public politics.NewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String url = model.getUrl();
+                        Intent intent = new Intent(getApplicationContext(), onclick.class);
+                        intent.putExtra("id", url);
+                        startActivity(intent);
+                    }
+                });
+            }
 
-                    View view = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.news_row, parent, false);
+            @Override
+            public politics.NewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-                    return new politics.NewsViewHolder(view);
-                }
-            };
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.news_row, parent, false);
 
-            mPeopleRV.setAdapter(mPeopleRVAdapter);
-        }
+                return new politics.NewsViewHolder(view);
+            }
+        };
+
+        mPeopleRV.setAdapter(mPeopleRVAdapter);
+    }
 
     @Override
     public void onStart() {
